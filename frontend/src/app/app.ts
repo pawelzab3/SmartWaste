@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -24,4 +24,11 @@ import { MatIconModule } from '@angular/material/icon'; // ⬅ potrzebne do ikon
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(private router: Router) {}
+
+  logout() {
+    localStorage.removeItem('token');
+    this.router.navigate(['/login']);
+  }
+}
