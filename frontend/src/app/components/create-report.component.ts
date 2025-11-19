@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ReportService } from '../services/reports.service';
 
-// MATERIAL IMPORTS
+// MATERIAL
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,23 +10,25 @@ import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-create-report',
-  standalone: true,   // <-- WAŻNE, bo używasz standalone Angular
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
+    MatButtonModule
   ],
   template: `
   <mat-card>
     <h2>Zgłoś problem</h2>
+
     <form [formGroup]="form" (ngSubmit)="submit()">
-      <mat-form-field>
+      
+      <mat-form-field appearance="outline">
         <input matInput placeholder="Tytuł" formControlName="title">
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field appearance="outline">
         <textarea matInput placeholder="Opis" formControlName="description"></textarea>
       </mat-form-field>
 
@@ -55,6 +57,6 @@ export class CreateReportComponent implements OnInit {
     this.srv.create({
       ...this.form.value,
       status: 'new'
-    }).subscribe(() => console.log('Wysłano!'));
+    }).subscribe(() => console.log("Wysłano!"));
   }
 }
