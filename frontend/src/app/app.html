@@ -1,1 +1,24 @@
-<router-outlet></router-outlet>
+<mat-sidenav-container class="layout-container">
+  <mat-sidenav mode="side" opened>
+    <h3 class="logo">SmartWaste</h3>
+
+    <mat-nav-list>
+      <a mat-list-item routerLink="/reports" routerLinkActive="active-link">
+        Lista zgłoszeń
+      </a>
+      <a mat-list-item routerLink="/reports/new" routerLinkActive="active-link">
+        Nowe zgłoszenie
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <span>Panel administracyjny SmartWaste</span>
+    </mat-toolbar>
+
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>
