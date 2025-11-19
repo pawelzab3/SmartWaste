@@ -1,16 +1,20 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
+
 @Entity()
 export class Report {
-  @PrimaryGeneratedColumn()
-  id: number;
+@PrimaryGeneratedColumn()
+id: number;
 
-  @Column()
-  title: string;
 
-  @Column()
-  description: string;
+@Column()
+title: string;
 
-  @Column()
-  status: string;
+
+@Column()
+description: string;
+
+
+@Column()
+status: string;
 }
