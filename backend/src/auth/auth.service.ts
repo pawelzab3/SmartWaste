@@ -27,4 +27,24 @@ export class AuthService {
       token: this.jwt.sign({ id: user.id, email: user.email }),
     };
   }
+
+  async register(email: string, password: string) {
+    const existing = await this.users.findByEmail(email);
+
+    if (existing) {
+      throw new UnauthorizedException('Użytkownik już istnieje');
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    const newUser = await this.users.create({
+      email,
+      password: hashed,
+    });
+
+    return {
+      message: 'Konto utworzone',
+      token: this.jwt.sign({ id: newUser.id, email: newUser.email }),
+    };
+  }  
 }
