@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
-
+import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common'; 
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon'; // ⬅ potrzebne do ikon
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-
+    CommonModule,
     MatSidenavModule,
     MatToolbarModule,
     MatListModule,
@@ -25,7 +25,16 @@ import { MatIconModule } from '@angular/material/icon'; // ⬅ potrzebne do ikon
   styleUrls: ['./app.css'],
 })
 export class AppComponent {
-  constructor(private router: Router) {}
+  hideLayout = false;
+  constructor(private router: Router) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+
+        // Ukryj layout na stronach logowania / rejestracji
+        this.hideLayout = event.url === '/login' || event.url === '/register';
+      }
+    });
+  }
 
   logout() {
     localStorage.removeItem('token');
