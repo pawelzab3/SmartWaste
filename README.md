@@ -172,16 +172,3 @@ DB_NAME=
 
 ### CI/CD
 Brak rozbudowanego CI/CD — możliwe do dodania później.
-
----
-
-## Podsumowanie
-
-SmartWaste to prosta aplikacja webowa pozwalająca użytkownikom:
-
-- zalogować się,
-- dodać zgłoszenie (temat + opis),
-- przeglądać listę zgłoszeń.
-
-System opiera się na architekturze klient–serwer i centralnej bazie MySQL.  
-Dokumentacja opisuje pełny proces projektowy, UML, testowanie, architekturę oraz pracę z Git.
