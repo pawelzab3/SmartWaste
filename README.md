@@ -195,11 +195,11 @@ DB_NAME=
 
 - **Frontend (Angular):**
 
-- ***ng serve -o***
+  ***ng serve -o***
 
 - **Backend:**
 
-- ***npm run build***
+  ***npm run build***
 
 
 ### CI/CD:
