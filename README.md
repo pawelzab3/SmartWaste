@@ -1,4 +1,4 @@
-# Dokumentacja Projektu – SmartWaste
+# SmartWaste
 
 ## 0. Opis systemu i dlaczego aplikacja jest sieciowa
 
