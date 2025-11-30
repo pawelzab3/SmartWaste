@@ -2,60 +2,47 @@
 
 ## 0. Opis systemu i dlaczego aplikacja jest sieciowa
 
-**Nazwa systemu:** SmartWaste  
-**Cel:** Aplikacja webowa umożliwiająca użytkownikom zarządzanie informacjami o pojemnikach na odpady oraz zgłoszeniach problemów.
+**SmartWaste** to prosta aplikacja webowa umożliwiająca użytkownikom:
 
-Wszyscy zalogowani użytkownicy mają **identyczne uprawnienia** i mogą wykonywać operacje dostępne w systemie.
+- logowanie do systemu,
+- dodawanie zgłoszeń (tylko: *temat* i *opis*),
+- przeglądanie wszystkich zgłoszeń zapisanych w bazie.
+
+W systemie **wszyscy użytkownicy mają takie same uprawnienia**.
 
 ### Dlaczego aplikacja jest sieciowa?
 
-1. **Centralna baza danych (MySQL)**  
-   Wszystkie dane przechowywane są w jednej bazie MySQL dostępnej przez sieć.  
-   Frontend i backend muszą komunikować się z serwerem bazodanowym – wymaga to architektury klient–serwer.
+1. **Centralna baza danych MySQL**  
+   Wszystkie zgłoszenia oraz dane użytkowników są przechowywane w jednej bazie danych dostępnej przez sieć, dlatego system działa w architekturze klient–serwer.
 
-2. **Backend jako API + frontend w przeglądarce**  
-   - Backend (Node.js/TypeScript) udostępnia REST API.  
-   - Frontend (Angular) działa w przeglądarce.  
-   - Komunikacja odbywa się przez HTTP(S), dlatego aplikacja wymaga połączenia sieciowego.
+2. **Frontend + Backend komunikujące się przez API**  
+   - Frontend działa w przeglądarce (Angular).  
+   - Backend udostępnia API (Node.js/TS).  
+   - Zapytania odbywają się przez HTTP.
 
-3. **Łatwe wdrażanie i aktualizacje**  
-   Użytkownik uruchamia aplikację w przeglądarce, zawsze widząc najnowszą wersję.
+3. **Łatwe aktualizacje i dostępność**  
+   Użytkownicy nie instalują aplikacji — uruchamiają ją przez przeglądarkę.
 
 ---
 
 ## a) Modele procesu i cykl życia
 
-### Omawiane modele:
+### Rozważane modele:
 
-- **Waterfall (kaskadowy)**  
-  Liniowy, mało elastyczny — nieidealny dla projektów uczelnianych.
+- Waterfall  
+- V-Model  
+- Iteracyjny / przyrostowy  
+- Scrum/Kanban  
+- Prototypowanie  
 
-- **V-Model**  
-  Rozszerzenie Waterfall, z przypisaniem testów do etapów projektowych.
+### Wybrany model: iteracyjno–przyrostowy
 
-- **Iteracyjny / przyrostowy**  
-  Projekt rozwijany krokami, każdy fragment dostarczany osobno.
+Podział prac:
 
-- **Zwinne (Scrum/Kanban)**  
-  Krótkie iteracje, backlog, szybkie wprowadzanie zmian.
-
-- **Prototypowanie**  
-  Szybkie wersje UI pozwalające zweryfikować pomysły.
-
-### Wybrany proces dla SmartWaste
-
-Wybrano **model iteracyjno–przyrostowy z elementami Scrum**, ponieważ:
-
-- pozwala na rozwijanie aplikacji etapami,
-- umożliwia szybkie testowanie każdego przyrostu,
-- dobrze sprawdza się w małych projektach.
-
-### Plan iteracji:
-
-1. **Iteracja 1** — logowanie, podstawowy layout  
-2. **Iteracja 2** — moduł pojemników (CRUD)  
-3. **Iteracja 3** — moduł zgłoszeń  
-4. **Iteracja 4** — poprawki, ewentualne statystyki  
+1. Iteracja 1 — logowanie + struktura projektu  
+2. Iteracja 2 — moduł zgłoszeń (formularz + zapis do bazy)  
+3. Iteracja 3 — lista zgłoszeń  
+4. Iteracja 4 — poprawki, UI, testy  
 
 ---
 
@@ -64,162 +51,134 @@ Wybrano **model iteracyjno–przyrostowy z elementami Scrum**, ponieważ:
 | ID | Wymaganie | Przypadek użycia | Komponenty | Testy |
 |----|-----------|------------------|------------|--------|
 | R1 | Logowanie użytkownika | UC1 | AuthController | Unit, System |
-| R2 | Zarządzanie pojemnikami (CRUD) | UC2 | ContainerController, MySQL | Unit, Integracja, System |
-| R3 | Dodawanie zgłoszeń | UC3 | IssueController, MySQL | Unit, System |
-| R4 | Przeglądanie zgłoszeń | UC4 | IssueController | System |
+| R2 | Dodawanie zgłoszenia (temat + opis) | UC2 | IssueController, MySQL | Unit, Integracja, System |
+| R3 | Przeglądanie zgłoszeń | UC3 | IssueController | System |
 
 ---
 
 ## b) Modelowanie i UML
 
-### Aktorzy:
+### Aktor:
 
-- **Użytkownik** — jedyny aktor; po zalogowaniu może korzystać z wszystkich funkcji.
+- **Użytkownik** — jedyny aktor w systemie, posiada pełny dostęp.
 
-### Przypadki użycia (Use Cases):
+### Przypadki użycia:
 
-- **UC1 – Logowanie do systemu**  
-- **UC2 – Zarządzanie pojemnikami (CRUD)**  
-- **UC3 – Dodawanie zgłoszeń**  
-- **UC4 – Przeglądanie zgłoszeń**
+- **UC1 – Logowanie**  
+- **UC2 – Dodawanie zgłoszenia (tylko temat + opis)**  
+- **UC3 – Przeglądanie listy zgłoszeń**
 
-### Diagram klas (tekstowo):
+### Diagram klas (tekstowo)
 
 **User**  
 - id  
 - email  
 - passwordHash  
 
-**Container**  
-- id  
-- location  
-- type  
-- capacity  
-
 **Issue**  
 - id  
-- title  
-- description  
-- status  
+- title (temat)  
+- description (opis)  
 - createdAt  
-- containerId  
 - userId  
 
-**Relacje:**  
-- User 1..* Issue  
-- Container 1..* Issue  
+Relacja: User 1..* Issue  
 
-### Diagram sekwencji — dodawanie zgłoszenia
+### Diagram sekwencji — dodanie zgłoszenia
 
-1. Użytkownik wysyła formularz w Angularze  
-2. Frontend → Backend: `POST /issues`  
-3. Backend → MySQL: `INSERT`  
-4. MySQL → Backend: potwierdzenie  
-5. Backend → Frontend: odpowiedź (`201 Created`)  
-6. Angular odświeża listę zgłoszeń  
+1. Użytkownik wypełnia formularz (temat + opis).  
+2. Frontend → Backend: POST /issues  
+3. Backend → MySQL: INSERT  
+4. MySQL → Backend: OK  
+5. Backend → Frontend: 201  
+6. Frontend odświeża listę zgłoszeń  
 
 ### Diagram stanów — Issue
 
 - **Nowe**  
-- **W trakcie**  
-- **Zamknięte**  
-- **Odrzucone** (opcjonalnie)
+- **Zamknięte** (opcjonalnie)  
 
 ---
 
 ## c) Architektura i wzorce projektowe
 
-### Architektura warstwowa:
+### Architektura warstwowa
 
-- **Frontend (Angular)** – prezentacja, obsługa UI  
-- **Backend (Node.js/TS)** – logika biznesowa, API  
-- **MySQL** – trwałe przechowywanie danych  
+- **Frontend (Angular)** – interfejs użytkownika  
+- **Backend (Node.js/TS)** – logika + API  
+- **MySQL** – przechowywanie użytkowników i zgłoszeń  
 
 ### Wzorce:
 
-- **MVC (backend w układzie Controller + Model)**  
-- **Repository pattern** – operacje na bazie  
-- **DTO** – wymiana danych frontend ↔ backend  
+- MVC (backend: Controller + Model)  
+- Repository pattern  
+- DTO  
 
 ---
 
-## d) Testowanie systemu
+## d) Testowanie
 
 ### Testy jednostkowe
-- logika backendu  
-- operacje CRUD  
-- walidacje
+- walidacja zgłoszeń  
+- logika logowania  
 
 ### Testy integracyjne
-- backend ↔ MySQL  
-- sprawdzenie poprawności zapisu i odczytu danych
+- zapis zgłoszeń do MySQL  
+- odczyt zgłoszeń  
 
 ### Testy systemowe
-- pełny przepływ danych od Angulara do bazy i z powrotem
+- logowanie → dodanie zgłoszenia → pojawienie się na liście  
 
 ### Testy akceptacyjne
-- zgodność z przypadkami użycia UC1–UC4
+- UC1–UC3
 
-### Zapewnienie jakości:
-- komentarze commitów  
-- lintowanie kodu (ESLint)  
-- Prettier (formatowanie kodu)  
+### Zapewnienie jakości
+- opisy commitów  
+- ESLint + Prettier  
 
 ---
 
 ## e) Konfiguracja, SCM (Git) i wydania
 
-### System kontroli wersji: Git
+### Model pracy z Git
 
-Repozytorium znajduje się pod adresem:  
+Repozytorium:  
 `https://github.com/pawelzab3/SmartWaste`
 
-### Model pracy z repozytorium:
+- Repozytorium posiada **jedną gałąź**:
+  ***main***
 
-- Repo posiada **jedną gałąź**:
+- Praca odbywa się poprzez commity z opisami zmian, np.:  
+- „Dodano formularz zgłoszeń”  
+- „Zaimplementowano logowanie”  
 
-- Cała praca odbywa się poprzez kolejne commity do `main`.
-- Każdy commit zawiera **czytelny opis zmian**, np.:
-- „Dodano widok zgłoszeń”
-- „Poprawiono błąd w formularzu pojemników”
-- „Implementacja logowania”
+### Konfiguracja (.env – lokalnie)
 
-### Konfiguracja projektu (.env lokalnie)
-
-DB_HOST=
-DB_USER=
-DB_PASSWORD=
-DB_NAME=
+***DB_HOST=***
+***DB_USER=***
+***DB_PASSWORD=***
+***DB_NAME=***
 
 ### Build:
 
 - **Frontend (Angular):**
-
   ***ng serve -o***
 
 - **Backend:**
+  ***npm run start***
 
-  ***npm run build***
-
-
-### CI/CD:
-Obecnie brak rozbudowanego CI/CD, ale repozytorium można łatwo rozszerzyć o:
-
-- automatyczne budowanie projektu,
-- uruchamianie testów,
-- deployment.
+### CI/CD
+Brak rozbudowanego CI/CD — możliwe do dodania później.
 
 ---
 
 ## Podsumowanie
 
-Dokumentacja opisuje pełny proces powstawania systemu SmartWaste wraz z:
+SmartWaste to prosta aplikacja webowa pozwalająca użytkownikom:
 
-- cyklem życia projektu,
-- modelowaniem UML,
-- architekturą,
-- testowaniem,
-- zarządzaniem wersjami w Git,
-- oraz wyjaśnieniem, dlaczego system jest aplikacją sieciową.
+- zalogować się,
+- dodać zgłoszenie (temat + opis),
+- przeglądać listę zgłoszeń.
 
-SmartWaste to prosta aplikacja webowa, w której wszyscy użytkownicy po zalogowaniu mają takie same uprawnienia, a dane przechowywane są w centralnej bazie MySQL.
+System opiera się na architekturze klient–serwer i centralnej bazie MySQL.  
+Dokumentacja opisuje pełny proces projektowy, UML, testowanie, architekturę oraz pracę z Git.
